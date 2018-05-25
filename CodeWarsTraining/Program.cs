@@ -10,23 +10,15 @@ namespace CodeWarsTraining
     {
         static void Main(string[] args)
         {
-			Console.WriteLine("hello world".ToAlternatingCase());
-			Console.WriteLine("HELLO WORLD".ToAlternatingCase());
-			Console.WriteLine("hello WORLD".ToAlternatingCase());
-			Console.WriteLine("HeLLo WoRLD".ToAlternatingCase());
-			Console.WriteLine("12345".ToAlternatingCase());
-			Console.WriteLine("1a2b3c4d5e".ToAlternatingCase());
-			Console.WriteLine("String.ToAlternatingCase".ToAlternatingCase());
-			Console.WriteLine("Hello World".ToAlternatingCase().ToAlternatingCase());
+			Console.WriteLine(Find(new int[] { 2, 6, 8, -10, 3 }));
+			Console.WriteLine(Find(new int[] { 206847684, 1056521, 7, 17, 1901, 21104421, 7, 1, 35521, 1, 7781 }));
+			Console.WriteLine(Find(new int[] { int.MaxValue, 0, 1 }));
 			Console.ReadLine();
 		}
-	}
 
-	public static class StringExt
-	{
-		public static string ToAlternatingCase(this string s)
+		public static int Find(int[] integers)
 		{
-			return String.Concat(s.Select(f => char.IsUpper(f) ? char.ToLower(f) : char.IsLower(f) ? char.ToUpper(f) : f));
+			return (integers.Count(f => f % 2 == 0) > 1) ? integers.SingleOrDefault(f => f % 2 > 0) : integers.SingleOrDefault(f => f % 2 == 0);
 		}
 	}
 }
