@@ -20,58 +20,22 @@ namespace CodeWarsTraining
 			Console.ReadLine();
 		}
 
+		private static IDictionary<char, char> _bracesMap = new Dictionary<char, char>()
+		{
+			{'(', ')'},
+			{'{', '}'},
+			{'[', ']'}
+		};
+
 		public static bool validBraces(String braces)
 		{
-			Dictionary<char, int> bracesRanks = new Dictionary<char, int>();
-			Dictionary<char, int> bracesCount = new Dictionary<char, int>();
+			Stack<char> stack = new Stack<char>();
 			foreach (var c in braces)
 			{
-				switch(c)
-				{
-					case ')':
-						if (bracesRanks.ContainsKey('(') && bracesRanks.Max(f => f.Value) == bracesRanks['('])
-							bracesCount['(']--;
-						else return false;
-						if (bracesCount['('] == 0)
-						{
-							bracesRanks.Remove('(');
-							bracesCount.Remove('(');
-						}
-						break;
-					case '}':
-						if (bracesRanks.ContainsKey('{') && bracesRanks.Max(f => f.Value) == bracesRanks['{'])
-							bracesCount['{']--;
-						else return false;
-						if (bracesCount['{'] == 0)
-						{
-							bracesRanks.Remove('{');
-							bracesCount.Remove('{');
-						}
-						break;
-					case ']':
-						if (bracesRanks.ContainsKey('[') && bracesRanks.Max(f => f.Value) == bracesRanks['['])
-							bracesCount['[']--;
-						else return false;
-						if (bracesCount['['] == 0)
-						{
-							bracesRanks.Remove('[');
-							bracesCount.Remove('[');
-						}
-						break;
-					default:
-						if (!bracesRanks.ContainsKey(c))
-						{
-							bracesRanks.Add(c, bracesRanks.Any() ? bracesRanks.Max(f => f.Value) + 1 : 1);
-							bracesCount.Add(c, 1);
-						}
-						else
-						{
-							bracesCount[c]++;
-						}
-						break;
-				}
+				if (stack.Count > 0 && _bracesMap.ContainsKey(stack.Peek()) && _bracesMap[stack.Peek()] == c) stack.Pop();
+				else stack.Push(c);
 			}
-			return bracesCount.All(f => f.Value == 0);
+			return stack.Count == 0;
 		}
 	}
 }
