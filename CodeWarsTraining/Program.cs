@@ -10,15 +10,68 @@ namespace CodeWarsTraining
     {
         static void Main(string[] args)
         {
-			Console.WriteLine(Find(new int[] { 2, 6, 8, -10, 3 }));
-			Console.WriteLine(Find(new int[] { 206847684, 1056521, 7, 17, 1901, 21104421, 7, 1, 35521, 1, 7781 }));
-			Console.WriteLine(Find(new int[] { int.MaxValue, 0, 1 }));
+			Console.WriteLine(validBraces("()"));
+			Console.WriteLine(validBraces("[(])"));
+			Console.WriteLine(validBraces("(){}[]"));
+			Console.WriteLine(validBraces("([{}])"));
+			Console.WriteLine(validBraces("[({})](]"));
+			Console.WriteLine(validBraces("(}"));
+			Console.WriteLine(validBraces("(({{[[]]}}))"));
 			Console.ReadLine();
 		}
 
-		public static int Find(int[] integers)
+		public static bool validBraces(String braces)
 		{
-			return (integers.Count(f => f % 2 == 0) > 1) ? integers.SingleOrDefault(f => f % 2 > 0) : integers.SingleOrDefault(f => f % 2 == 0);
+			Dictionary<char, int> bracesRanks = new Dictionary<char, int>();
+			Dictionary<char, int> bracesCount = new Dictionary<char, int>();
+			foreach (var c in braces)
+			{
+				switch(c)
+				{
+					case ')':
+						if (bracesRanks.ContainsKey('(') && bracesRanks.Max(f => f.Value) == bracesRanks['('])
+							bracesCount['(']--;
+						else return false;
+						if (bracesCount['('] == 0)
+						{
+							bracesRanks.Remove('(');
+							bracesCount.Remove('(');
+						}
+						break;
+					case '}':
+						if (bracesRanks.ContainsKey('{') && bracesRanks.Max(f => f.Value) == bracesRanks['{'])
+							bracesCount['{']--;
+						else return false;
+						if (bracesCount['{'] == 0)
+						{
+							bracesRanks.Remove('{');
+							bracesCount.Remove('{');
+						}
+						break;
+					case ']':
+						if (bracesRanks.ContainsKey('[') && bracesRanks.Max(f => f.Value) == bracesRanks['['])
+							bracesCount['[']--;
+						else return false;
+						if (bracesCount['['] == 0)
+						{
+							bracesRanks.Remove('[');
+							bracesCount.Remove('[');
+						}
+						break;
+					default:
+						if (!bracesRanks.ContainsKey(c))
+						{
+							bracesRanks.Add(c, bracesRanks.Any() ? bracesRanks.Max(f => f.Value) + 1 : 1);
+							bracesCount.Add(c, 1);
+						}
+						else
+						{
+							bracesCount[c]++;
+						}
+						break;
+				}
+			}
+			return bracesCount.All(f => f.Value == 0);
 		}
 	}
 }
