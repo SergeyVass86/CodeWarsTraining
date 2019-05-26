@@ -10,32 +10,21 @@ namespace CodeWarsTraining
     {
         static void Main(string[] args)
         {
-			Console.WriteLine(validBraces("()"));
-			Console.WriteLine(validBraces("[(])"));
-			Console.WriteLine(validBraces("(){}[]"));
-			Console.WriteLine(validBraces("([{}])"));
-			Console.WriteLine(validBraces("[({})](]"));
-			Console.WriteLine(validBraces("(}"));
-			Console.WriteLine(validBraces("(({{[[]]}}))"));
+			int counter = 0;
+			Parallel.For(0, 100, i => counter++);
+			Console.WriteLine(counter);
+			//Console.WriteLine(binaryArrayToNumber(new int[] { 0, 0, 0, 0 }));
+			//Console.WriteLine(binaryArrayToNumber(new int[] { 1, 1, 1, 1 }));
+			//Console.WriteLine(binaryArrayToNumber(new int[] { 0, 1, 1, 0 }));
+			//Console.WriteLine(binaryArrayToNumber(new int[] { 0, 1, 0, 1 }));
+			//Console.WriteLine(binaryArrayToNumber(new int[] { 1, 0, 1, 1 }));
 			Console.ReadLine();
 		}
 
-		private static IDictionary<char, char> _bracesMap = new Dictionary<char, char>()
+		public static int binaryArrayToNumber(int[] BinaryArray)
 		{
-			{'(', ')'},
-			{'{', '}'},
-			{'[', ']'}
-		};
-
-		public static bool validBraces(String braces)
-		{
-			Stack<char> stack = new Stack<char>();
-			foreach (var c in braces)
-			{
-				if (stack.Count > 0 && _bracesMap.ContainsKey(stack.Peek()) && _bracesMap[stack.Peek()] == c) stack.Pop();
-				else stack.Push(c);
-			}
-			return stack.Count == 0;
+			int i = 0;
+			return BinaryArray.Reverse().Sum(f => (int)(Math.Pow(2, i++)) * f);
 		}
 	}
 }
