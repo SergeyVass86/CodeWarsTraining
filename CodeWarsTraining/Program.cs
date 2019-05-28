@@ -10,24 +10,23 @@ namespace CodeWarsTraining
 	{
 		static void Main(string[] args)
 		{
-			Console.WriteLine(GetReadableTime(0));
-			Console.WriteLine(GetReadableTime(5));
-			Console.WriteLine(GetReadableTime(60));
-			Console.WriteLine(GetReadableTime(86399));
-			Console.WriteLine(GetReadableTime(359999));
+			Console.WriteLine(IsPrime(0));
+			Console.WriteLine(IsPrime(1));
+			Console.WriteLine(IsPrime(2));
 			Console.ReadLine();
 		}
 
-		public static string GetReadableTime(int seconds)
+		public static bool IsPrime(int n)
 		{
-			if (seconds > 359999) return "";
-
-			TimeSpan t = TimeSpan.FromSeconds(seconds);
-
-			return string.Format("{0:D2}:{1:D2}:{2:D2}",
-							t.Hours + (t.Days > 0 ? t.Days * 24 : 0),
-							t.Minutes,
-							t.Seconds);
+			if (n <= 3) return n > 1;
+			else if (n % 2 == 0 || n % 3 == 0) return false;
+			var i = 5;
+			while (i * i <= n)
+			{
+				if (n % i == 0 || n % (i + 2) == 0) return false;
+				i += 6;
+			}
+			return true;
 		}
 	}
 }
