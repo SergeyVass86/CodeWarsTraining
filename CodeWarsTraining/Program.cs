@@ -10,23 +10,35 @@ namespace CodeWarsTraining
 	{
 		static void Main(string[] args)
 		{
-			Console.WriteLine(IsPrime(0));
-			Console.WriteLine(IsPrime(1));
-			Console.WriteLine(IsPrime(2));
+			Console.WriteLine(IsBalanced("(Sensei says yes!)", "()"));
+			Console.WriteLine(IsBalanced("(Sensei says no!", "()"));
+			Console.WriteLine(IsBalanced("(Sensei [says] yes!)", "()[]"));
+			Console.WriteLine(IsBalanced("(Sensei [says) no!]", "()[]"));
+			Console.WriteLine(IsBalanced("Sensei says -yes-!", "--"));
+			Console.WriteLine(IsBalanced("Sensei -says no!", "--"));
+			Console.WriteLine(IsBalanced("Hello Mother can you hear me?)[Monkeys, in my pockets!!]", "()[]"));
+			Console.WriteLine(IsBalanced("(Hello Mother can you hear me?))", "()"));
 			Console.ReadLine();
 		}
 
-		public static bool IsPrime(int n)
+		public static bool IsBalanced(string s, string caps)
 		{
-			if (n <= 3) return n > 1;
-			else if (n % 2 == 0 || n % 3 == 0) return false;
-			var i = 5;
-			while (i * i <= n)
+			IDictionary<char, char> _bracesMap = new Dictionary<char, char>();
+
+			var temp = caps;
+			while(temp != null && temp.Length > 0)
 			{
-				if (n % i == 0 || n % (i + 2) == 0) return false;
-				i += 6;
+				var chars = temp.Substring(0, 2).Select(c => c);
+				_bracesMap.Add(chars.First(), chars.Last());
+				temp = temp.Substring(2);
 			}
-			return true;
+			Stack<char> stack = new Stack<char>();
+			foreach (var c in s)
+			{
+				if (stack.Count > 0 && _bracesMap.ContainsKey(stack.Peek()) && _bracesMap[stack.Peek()] == c) stack.Pop();
+				else if(_bracesMap.ContainsKey(c) || _bracesMap.Any(f => f.Value == c)) stack.Push(c);
+			}
+			return stack.Count == 0;
 		}
 	}
 }
