@@ -10,35 +10,60 @@ namespace CodeWarsTraining
 	{
 		static void Main(string[] args)
 		{
-			Console.WriteLine(IsBalanced("(Sensei says yes!)", "()"));
-			Console.WriteLine(IsBalanced("(Sensei says no!", "()"));
-			Console.WriteLine(IsBalanced("(Sensei [says] yes!)", "()[]"));
-			Console.WriteLine(IsBalanced("(Sensei [says) no!]", "()[]"));
-			Console.WriteLine(IsBalanced("Sensei says -yes-!", "--"));
-			Console.WriteLine(IsBalanced("Sensei -says no!", "--"));
-			Console.WriteLine(IsBalanced("Hello Mother can you hear me?)[Monkeys, in my pockets!!]", "()[]"));
-			Console.WriteLine(IsBalanced("(Hello Mother can you hear me?))", "()"));
+			//Console.WriteLine(IsBalanced("(Sensei says yes!)", "()"));
+			//Console.WriteLine(IsBalanced("(Sensei says no!", "()"));
+			//Console.WriteLine(IsBalanced("(Sensei [says] yes!)", "()[]"));
+			//Console.WriteLine(IsBalanced("(Sensei [says) no!]", "()[]"));
+			//Console.WriteLine(IsBalanced("Sensei says -yes-!", "--"));
+			//Console.WriteLine(IsBalanced("Sensei -says no!", "--"));
+			//Console.WriteLine(IsBalanced("Hello Mother can you hear me?)[Monkeys, in my pockets!!]", "()[]"));
+			Console.WriteLine(IDsOfSongs(90, new List<int> { 1, 10, 25, 35, 60 }));
 			Console.ReadLine();
 		}
 
-		public static bool IsBalanced(string s, string caps)
+		public static List<int> IDsOfSongs(int rideDuration, List<int> songDurations)
 		{
-			IDictionary<char, char> _bracesMap = new Dictionary<char, char>();
+			int sumOfPairs = rideDuration - 30;
+			List<SongPair> foundedPairs = new List<SongPair>();
+			for (int i = 0; i < songDurations.Count; i++)
+			{
+				int currSongDuration = songDurations[i];
+				var tempList = new List<int>(songDurations);
+				tempList.RemoveAt(i);
+				int pairId = Array.BinarySearch(tempList.ToArray(), (sumOfPairs - currSongDuration));
+				if (pairId > 0 && pairId < songDurations.Count)
+				{
+					foundedPairs.Add(new SongPair
+					{
+						SongId1 = i,
+						SongDuration1 = currSongDuration,
+						SongId2 = pairId >= i ? pairId + 1 : pairId,
+						SongDuration2 = songDurations[pairId >= i ? pairId + 1 : pairId]
+					});
+				}
+			}
+			if (foundedPairs.Count > 0)
+			{
+				int max = foundedPairs[0].SongDuration1 > foundedPairs[0].SongDuration2 ?
+					foundedPairs[0].SongDuration1 : foundedPairs[0].SongDuration2;
+				for (int i = 1; i < foundedPairs.Count; i++)
+				{
+					if (foundedPairs[i].SongDuration1 > max) max = foundedPairs[i].SongDuration1;
+					if (foundedPairs[i].SongDuration2 > max) max = foundedPairs[i].SongDuration2;
+				}
+				var selectedPair = foundedPairs.Where(f => f.SongDuration1 == max ||
+									f.SongDuration2 == max).First();
+				return new List<int> { selectedPair.SongId1, selectedPair.SongId2 };
+			}
+			return new List<int>();
+		}
 
-			var temp = caps;
-			while(temp != null && temp.Length > 0)
-			{
-				var chars = temp.Substring(0, 2).Select(c => c);
-				_bracesMap.Add(chars.First(), chars.Last());
-				temp = temp.Substring(2);
-			}
-			Stack<char> stack = new Stack<char>();
-			foreach (var c in s)
-			{
-				if (stack.Count > 0 && _bracesMap.ContainsKey(stack.Peek()) && _bracesMap[stack.Peek()] == c) stack.Pop();
-				else if(_bracesMap.ContainsKey(c) || _bracesMap.Any(f => f.Value == c)) stack.Push(c);
-			}
-			return stack.Count == 0;
+		private class SongPair
+		{
+			public int SongId1 { get; set; }
+			public int SongDuration1 { get; set; }
+			public int SongId2 { get; set; }
+			public int SongDuration2 { get; set; }
 		}
 	}
 }
