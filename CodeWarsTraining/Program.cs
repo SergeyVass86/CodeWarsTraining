@@ -17,45 +17,46 @@ namespace CodeWarsTraining
 			//Console.WriteLine(IsBalanced("Sensei says -yes-!", "--"));
 			//Console.WriteLine(IsBalanced("Sensei -says no!", "--"));
 			//Console.WriteLine(IsBalanced("Hello Mother can you hear me?)[Monkeys, in my pockets!!]", "()[]"));
-			Console.WriteLine(IDsOfSongs(90, new List<int> { 1, 10, 25, 35, 60 }));
+			var optimalList = optimalUtilization(7, new List<List<int>> { new List<int> { 1, 4 }, new List<int> { 2, 1 }, new List<int> { 3, 3 }, new List<int> { 4, 3 } }, new List<List<int>> { new List<int> { 1, 4 } });
+			foreach(var item in optimalList)
+			{
+				Console.WriteLine(string.Format("fapp: {0} bapp: {1}", item[0], item[1]));
+			}
 			Console.ReadLine();
 		}
 
-		public static List<int> IDsOfSongs(int rideDuration, List<int> songDurations)
+		public static List<List<int>> optimalUtilization(int deviceCapacity,
+											 List<List<int>> foregroundAppList,
+											 List<List<int>> backgroundAppList)
 		{
-			int sumOfPairs = rideDuration - 30;
-			List<SongPair> foundedPairs = new List<SongPair>();
-			for (int i = 0; i < songDurations.Count; i++)
+			List<List<int>> result = new List<List<int>>();
+			var sortedFapp = foregroundAppList.Where(f => f[1] <= deviceCapacity).OrderBy(f => f[1]).ToList();
+			var sortedBapp = backgroundAppList.Where(f => f[1] <= deviceCapacity).OrderBy(f => f[1]).ToList();
+			int max = 0;
+			foreach (var fapp in sortedFapp)
 			{
-				int currSongDuration = songDurations[i];
-				var tempList = new List<int>(songDurations);
-				tempList.RemoveAt(i);
-				int pairId = Array.BinarySearch(tempList.ToArray(), (sumOfPairs - currSongDuration));
-				if (pairId > 0 && pairId < songDurations.Count)
+				var remainingBapps = sortedBapp.Where(f => f[1] <= deviceCapacity - fapp[1]).ToList();
+				if (remainingBapps.Count > 0)
 				{
-					foundedPairs.Add(new SongPair
+					if (fapp[1] + remainingBapps.Last()[1] >= max)
 					{
-						SongId1 = i,
-						SongDuration1 = currSongDuration,
-						SongId2 = pairId >= i ? pairId + 1 : pairId,
-						SongDuration2 = songDurations[pairId >= i ? pairId + 1 : pairId]
-					});
+						if (fapp[1] + remainingBapps.Last()[1] > max)
+						{
+							max = fapp[1] + remainingBapps.Last()[1];
+							if (result.Count > 0)
+							{
+								var removeItems = result.Where(f => f[0] + f[1] < max).ToList();
+								result.Clear();
+							}
+						}
+						foreach (var maxItem in remainingBapps.Where(f => f[1] == remainingBapps.Last()[1]))
+						{
+							result.Add(new List<int> { fapp[0], maxItem[0] });
+						}
+					}
 				}
 			}
-			if (foundedPairs.Count > 0)
-			{
-				int max = foundedPairs[0].SongDuration1 > foundedPairs[0].SongDuration2 ?
-					foundedPairs[0].SongDuration1 : foundedPairs[0].SongDuration2;
-				for (int i = 1; i < foundedPairs.Count; i++)
-				{
-					if (foundedPairs[i].SongDuration1 > max) max = foundedPairs[i].SongDuration1;
-					if (foundedPairs[i].SongDuration2 > max) max = foundedPairs[i].SongDuration2;
-				}
-				var selectedPair = foundedPairs.Where(f => f.SongDuration1 == max ||
-									f.SongDuration2 == max).First();
-				return new List<int> { selectedPair.SongId1, selectedPair.SongId2 };
-			}
-			return new List<int>();
+			return result;
 		}
 
 		private class SongPair
