@@ -43,11 +43,7 @@ namespace CodeWarsTraining
 						if (fapp[1] + remainingBapps.Last()[1] > max)
 						{
 							max = fapp[1] + remainingBapps.Last()[1];
-							if (result.Count > 0)
-							{
-								var removeItems = result.Where(f => f[0] + f[1] < max).ToList();
-								result.Clear();
-							}
+							result.Clear();
 						}
 						foreach (var maxItem in remainingBapps.Where(f => f[1] == remainingBapps.Last()[1]))
 						{
